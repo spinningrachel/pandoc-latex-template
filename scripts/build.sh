@@ -75,6 +75,7 @@ EOF
 pandoc \
     "${CHAPTERS[@]}" \
     -o "output/${OUTPUT_NAME}.pdf" \
+    --from=markdown-implicit_figures \
     --pdf-engine=xelatex \
     --top-level-division=chapter \
     --metadata-file=templates/pdf-template.yaml \
