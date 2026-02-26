@@ -1,0 +1,12 @@
+# Chapter Order Configuration
+# One chapter per line, in the order they should appear in the PDF
+# Lines starting with # are ignored
+# Simply add, remove, or reorder lines to change your document
+
+# Section divider
+markdown/guide-1/sections/getting-started.md
+
+# Chapters
+markdown/guide-1/chapters/introduction.md
+markdown/guide-1/chapters/features-demo.md
+markdown/guide-1/chapters/getting-started-guide.md

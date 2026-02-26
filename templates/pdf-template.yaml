@@ -1,0 +1,39 @@
+# PDF Styling Configuration
+# Edit these values to customize your PDF appearance
+
+# Document class and options
+documentclass: report
+papersize: a4
+classoption:
+  - 11pt
+  - oneside
+
+# Page geometry
+geometry:
+  - margin=1in
+  - top=1.25in
+  - bottom=1.5in
+
+# Typography
+fontsize: 11pt
+linestretch: 1.2
+
+# Fonts - change these to match your brand
+# Inter and JetBrains Mono are free fonts available from Google Fonts
+mainfont: "Inter"
+mainfontoptions:
+  - Ligatures=TeX
+
+monofont: "JetBrains Mono"
+monofontoptions:
+  - Scale=0.91
+
+# Colors (requires xcolor package)
+linkcolor: linkcolor
+urlcolor: blue
+citecolor: blue
+
+# Table of Contents
+toc: true
+toc-depth: 2
+number-sections: true

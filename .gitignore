@@ -1,0 +1,24 @@
+# Build outputs
+output/
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# macOS
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# LaTeX auxiliary files
+*.aux
+*.log
+*.toc
+*.out
+*.lof
+*.lot

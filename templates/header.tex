@@ -1,0 +1,719 @@
+\usepackage{fancyhdr}
+\usepackage{vcell}
+
+% Document title variables (set by build scripts via --include-in-header)
+% Provide defaults if not already defined
+\providecommand{\DocTitle}{Your Project Name}
+\providecommand{\DocSubtitle}{Documentation}
+
+% Appendix formatting - ensure chapters are lettered after \appendix
+\usepackage{appendix}
+\renewcommand{\appendixname}{Appendix}
+
+% Custom colors - customize these to match your brand
+\usepackage[table]{xcolor}
+\definecolor{primarycolor}{RGB}{25, 25, 60}       % Dark navy - footer background, headers
+\definecolor{accentcolor}{RGB}{43, 55, 80}         % Slate blue - secondary headings
+\definecolor{sectioncolor}{RGB}{48, 26, 76}        % Deep purple - section dividers
+\definecolor{emphasiscolor}{RGB}{105, 84, 150}     % Medium purple - generic dividers
+\definecolor{linkcolor}{RGB}{0, 128, 191}          % Teal blue - hyperlinks
+\definecolor{snippets}{RGB}{239, 242, 248}         % Light lavender - code block background
+\definecolor{green}{RGB}{24, 119, 76}
+\definecolor{black}{RGB}{0, 0, 0}
+
+
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+\newcommand{\black}[1]{\textcolor{black}{#1}}
+
+\renewcommand{\arraystretch}{1.3}
+
+% Graphics for logo and background images
+\usepackage{graphicx}
+\usepackage{eso-pic}
+
+% Prevent floats from overlapping headers/footers
+\usepackage{float}
+
+% Caption formatting - make label and number bold
+\usepackage{caption}
+\captionsetup{
+  labelfont=bf,
+  labelsep=colon,
+  textfont=normalfont
+}
+
+% Package for ensuring minimum space before blocks
+\usepackage{needspace}
+
+
+% Footer container to enable colored background
+% Add shaded background to footer on every page
+\AddToShipoutPictureBG{%
+    \AtPageLowerLeft{%
+        \color{primarycolor}%
+        \rule{\paperwidth}{2.2cm}%
+    }%
+}
+
+
+
+
+% Prevent widows and orphans (single lines at top/bottom of pages)
+\widowpenalty=10000
+\clubpenalty=10000
+\raggedbottom
+
+% Prevent page breaks between paragraphs and following content
+\predisplaypenalty=10000
+
+% Increase penalty for content at bottom of page to prevent footer overlap
+\makeatletter
+\setlength{\@fpsep}{12pt plus 1fil}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+
+% Control float placement to prevent overlapping with headers/footers
+\setlength{\textfloatsep}{10pt}     % Minimum space between float and text
+\setlength{\floatsep}{10pt}         % Space between consecutive floats
+\renewcommand{\topfraction}{0.85}   % Max fraction of page for floats at top
+\renewcommand{\bottomfraction}{0.7} % Max fraction of page for floats at bottom
+\renewcommand{\textfraction}{0.15}  % Min fraction of page for text
+\renewcommand{\floatpagefraction}{0.8} % Min fraction of float page that must be floats
+
+% Reduce excessive spacing around figures (specific to figures only via AtBeginEnvironment below)
+\setlength{\intextsep}{6pt}        % Space above and below in-text floats (figures)
+\setlength{\abovecaptionskip}{4pt} % Space above caption
+\setlength{\belowcaptionskip}{2pt} % Space below caption
+
+% Apply tight spacing specifically to figure environments only (not tables)
+\AtBeginEnvironment{figure}{\vspace{0pt}}
+\AtEndEnvironment{figure}{\vspace{-4pt}}
+
+% Title page - appears BEFORE TOC
+\AtBeginDocument{%
+\begin{titlepage}
+\thispagestyle{empty}
+
+% Background image - full page
+% Replace images/brand-background.png with your own background image
+\AddToShipoutPictureBG*{%
+  \includegraphics[width=\paperwidth,height=\paperheight]{images/brand-background.png}%
+}
+
+% Logo top right
+% Replace images/logo.png with your own logo
+\begin{flushright}
+\vspace*{.5cm}
+\includegraphics[width=0.1\textwidth]{images/logo.png}
+\end{flushright}
+
+\vspace*{2cm}
+
+% Title centered
+\centering
+{\Huge\bfseries\color{white} \DocTitle}
+
+\vspace{.8cm}
+
+{\LARGE\bfseries\color{white} \DocSubtitle}
+
+\vspace{15cm}
+
+% Auto-updating date (Month YYYY format)
+{\normalsize\color{white} \ifcase\month\or January\or February\or March\or April\or May\or June\or July\or August\or September\or October\or November\or December\fi\space\number\year}
+
+\vfill
+
+\end{titlepage}
+
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+}
+
+% Section counter for major sections
+\newcounter{sectioncounter}
+
+% Define custom section divider style with automatic numbering
+\newcommand{\sectiondivider}[1]{%
+  \stepcounter{sectioncounter}%
+  \newpage
+  \thispagestyle{empty}
+  % Set page background
+  \AddToShipoutPictureBG*{%
+    \color[RGB]{242,244,248}\rule{\paperwidth}{\paperheight}%
+  }
+  \vspace*{\fill}
+  \begin{center}
+ \uppercase{\bfseries}{\Large\color{sectioncolor}SECTION \Roman{sectioncounter}}\\[2cm]
+  {\Huge\color{sectioncolor}#1}
+  \end{center}
+  \vspace*{\fill}
+  \newpage
+  \addcontentsline{toc}{sectiondivider}{Section \Roman{sectioncounter}: #1}%
+}
+
+% Generic divider for Appendices (Same style as Section Divider)
+\newcommand{\genericdivider}[1]{%
+    \newpage
+    \thispagestyle{empty}
+    \AddToShipoutPictureBG*{%
+        \color[RGB]{242,244,248}\rule{\paperwidth}{\paperheight}%
+    }
+    \vspace*{\fill}
+    \begin{center}
+        % No "SECTION X" counter here, just the title
+        {\Huge\color{sectioncolor}#1}
+    \end{center}
+    \vspace*{\fill}
+    \newpage
+    \addcontentsline{toc}{genericdivider}{#1}%
+}
+
+% Appendix divider (styled like section dividers but unnumbered)
+\newcommand{\appendixdivider}[1]{%
+    \newpage
+    \thispagestyle{empty}
+    \AddToShipoutPictureBG*{%
+        \color[RGB]{242,244,248}\rule{\paperwidth}{\paperheight}%
+    }
+    \vspace*{\fill}
+    \begin{center}
+        {\Huge\color{sectioncolor}#1}
+    \end{center}
+    \vspace*{\fill}
+    \newpage
+    \addcontentsline{toc}{appendixdivider}{#1}%
+}
+
+% Appendix counter and formatting (DEPRECATED - use \appendix instead)
+\newcounter{appendixcounter}
+\newcommand{\appendixheading}[1]{%
+  \newpage
+  \stepcounter{appendixcounter}%
+  \section*{Appendix \Roman{appendixcounter}: #1}%
+  \addcontentsline{toc}{section}{References \Roman{appendixcounter}: #1}%
+}
+
+% Configure appendix numbering
+\usepackage{titlesec}
+
+
+\usepackage{tocloft}
+
+\makeatletter
+\addtocounter{tocdepth}{-2}
+
+% --- Chapter TOC spacing controls ---
+\newlength{\chapbeforeskip}
+\newlength{\chapafterskip}
+\setlength{\chapbeforeskip}{5pt}  % Space BEFORE chapter entry
+\setlength{\chapafterskip}{2.5pt} % Space AFTER chapter entry
+
+% Ensure chapter TOC entries always have dotted leaders and custom spacing
+\renewcommand{\l@chapter}[2]{%
+  \vspace{\chapbeforeskip}%
+  \@dottedtocline{0}{0pt}{1.5em}{#1}{#2}%
+  \vspace{\chapafterskip}%
+}
+
+% Section dividers
+\def\l@sectiondivider#1#2{%
+  \vspace{20pt}%
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}%
+    \vskip 1em \@plus\p@
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \fontsize{12pt}{14pt}\selectfont\bfseries\color{sectioncolor}
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      #1\nobreak\hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+    \endgroup
+  \fi
+  \vspace{4pt}%
+}
+
+% Generic dividers
+\def\l@genericdivider#1#2{%
+  \vspace{6pt}%
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}%
+    \vskip 0.5em \@plus\p@
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \fontsize{11pt}{13pt}\selectfont\bfseries\color{accentcolor}
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      #1\nobreak\hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+    \endgroup
+  \fi
+  \vspace{2pt}%
+}
+\makeatother
+
+% Default fancy page style (Regular pages)
+% Customize the header text to match your project name
+\fancypagestyle{fancy}{%
+    \fancyhf{}
+    \fancyhead[L]{\footnotesize \textit{\DocTitle}}
+    % Header Right displays current chapter/appendix name
+    \fancyhead[R]{\footnotesize \leftmark}
+
+    % Footer: White text on colored background
+    \fancyfoot[L]{\raisebox{-9pt}{\footnotesize \raisebox{-6pt}{\includegraphics[height=0.6cm]{images/logo.png}}}}
+    \fancyfoot[C]{\raisebox{-10pt}{\footnotesize \color{white} \textit{Last updated:} \today}}
+    \fancyfoot[R]{\raisebox{-10pt}{\footnotesize \color{white} \thepage}}
+
+    \renewcommand{\headrulewidth}{0.4pt}
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+% Plain style (First page of chapters) - Updated to match 'fancy' footer
+\fancypagestyle{plain}{%
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+
+    \fancyfoot[L]{\raisebox{-9pt}{\footnotesize \raisebox{-6pt}{\includegraphics[height=0.6cm]{images/logo.png}}}}
+    \fancyfoot[C]{\raisebox{-10pt}{\footnotesize \color{white} \textit{Last updated:} \today}}
+    \fancyfoot[R]{\raisebox{-10pt}{\footnotesize \color{white} \thepage}}
+
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+% Empty style for section divider pages (no header, no footer)
+\fancypagestyle{empty}{%
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+}
+
+% TOC style (no header, keep footer)
+\fancypagestyle{tocstyle}{%
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+
+    \fancyfoot[L]{\raisebox{-9pt}{\footnotesize \raisebox{-6pt}{\includegraphics[height=0.6cm]{images/logo.png}}}}
+    \fancyfoot[C]{\raisebox{-10pt}{\footnotesize \color{white} \textit{Last updated:} \today}}
+    \fancyfoot[R]{\raisebox{-10pt}{\footnotesize \color{white} \thepage}}
+
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+% Customize TOC section entries
+\usepackage{tocloft}
+
+% TOC Entry Hierarchy:
+% 1. Section Dividers (numbered) - "Section I: Getting Started"
+%    Style: Large (12pt), bold, sectioncolor, extra spacing
+% 2. Appendix Divider (unnumbered) - "Appendices"
+%    Style: Same as section dividers
+% 3. Generic Dividers (unnumbered) - "Step 1: Getting Started"
+%    Style: Medium (11pt), bold, emphasiscolor, moderate spacing
+% 4. Chapters (regular numbered) - Default report class styling
+
+% Style for numbered section dividers
+\makeatletter
+\def\l@sectiondivider#1#2{%
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}%
+    \vskip 2em \@plus\p@
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \bfseries
+      \fontsize{12pt}{14pt}\selectfont
+      \color{sectioncolor}%
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      #1\nobreak\hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+      \penalty\@highpenalty
+    \endgroup
+    \vskip 0.5em \@plus\p@
+  \fi
+}
+
+% Style for appendix divider
+\def\l@appendixdivider#1#2{%
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}%
+    \vskip 2em \@plus\p@
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \bfseries
+      \fontsize{12pt}{14pt}\selectfont
+      \color{sectioncolor}%
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      #1\nobreak\hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+      \penalty\@highpenalty
+    \endgroup
+    \vskip 0.5em \@plus\p@
+  \fi
+}
+
+% Style for unnumbered generic dividers
+\def\l@genericdivider#1#2{%
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}%
+    \vskip 1.0em \@plus\p@
+    \setlength\@tempdima{1.5em}%
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode \bfseries
+      \fontsize{11pt}{13pt}\selectfont
+      \color{emphasiscolor}%
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      #1\nobreak\hfil \nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+      \penalty\@highpenalty
+    \endgroup
+    \vskip 0.3em \@plus\p@
+  \fi
+}
+\makeatother
+
+% Set default page style
+\pagestyle{fancy}
+\setlength{\footskip}{64pt}
+
+% Make chapter pages use plain style (no header)
+\patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{plain}}{}{}
+
+% Apply tocstyle to table of contents
+\usepackage{etoolbox}
+\preto\tableofcontents{%
+  \clearpage
+  \thispagestyle{tocstyle}%
+  \pagestyle{tocstyle}%
+  \addtocontents{toc}{\protect\widowpenalty=10000}%
+  \addtocontents{toc}{\protect\clubpenalty=10000}%
+  \addtocontents{toc}{\protect\interlinepenalty=10000}%
+}
+\appto\tableofcontents{%
+  \clearpage
+  \phantomsection
+  \addcontentsline{toc}{chapter}{List of Figures}
+  \listoffigures
+  \clearpage
+  \pagestyle{fancy}
+}
+
+% Prevent page breaks between TOC entries and their sub-entries
+\makeatletter
+\renewcommand{\@starttoc}[1]{%
+  \begingroup
+    \@input{\jobname.#1}%
+    \if@filesw
+      \expandafter\newwrite\csname tf@#1\endcsname
+      \immediate\openout \csname tf@#1\endcsname \jobname.#1\relax
+    \fi
+    \@nobreakfalse
+  \endgroup
+}
+\makeatother
+
+% Table styling
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{colortbl}
+\usepackage{multirow}
+
+% Create new column type M for middle-aligned columns
+\newcolumntype{M}[1]{m{#1}}
+
+% Define flexible column types for tabularx (auto-expanding to fill width)
+\newcolumntype{Y}{>{\centering\arraybackslash}X}  % Centered, auto-width
+\newcolumntype{Z}{>{\raggedright\arraybackslash}X} % Left-aligned, auto-width
+
+
+% Apply font sizing to tabularx environment
+\AtBeginEnvironment{tabularx}{%
+  \fontsize{9pt}{10pt}\selectfont
+}
+
+
+% Define admonition colors
+\definecolor{notecolor}{RGB}{214, 214, 214}
+\definecolor{importantcolor}{RGB}{255, 154, 3}
+\definecolor{warningcolor}{RGB}{255, 105, 94}
+\definecolor{tipcolor}{RGB}{51, 108, 155}
+\definecolor{criticalcolor}{RGB}{255, 105, 94}
+\definecolor{plaintable}{RGB}{244, 242, 248}
+\definecolor{darkfont}{RGB}{21, 6, 43}
+\definecolor{imageborder}{HTML}{1D102D}
+
+
+
+% Process openings - for step-by-step procedure headers
+\newcommand{\processstart}{%
+  \needspace{6\baselineskip}%
+  \vspace{6pt}%
+  \par\noindent%
+  \nopagebreak%
+  \begin{minipage}{\textwidth}%
+  \nopagebreak%
+  \rowcolors{1}{}{}%
+  \arrayrulecolor{sectioncolor}%
+  \begin{tabular}{>{\color{sectioncolor}\bfseries\setlength{\parindent}{-7pt}\setlength{\leftskip}{2pt}\setlength{\rightskip}{8pt}\fontsize{13pt}{15pt}\selectfont}p{0.7\textwidth}}%
+  \nopagebreak%
+}
+\newcommand{\processend}{%
+  \nopagebreak%
+  \\ \hline
+  \end{tabular}%
+  \arrayrulecolor{tableborder}%
+  \end{minipage}%
+  \par%
+  \vspace{5pt}%
+}
+
+
+
+
+% Admonition table styling
+% Each admonition type has a colored left border and icon
+% Replace icon paths with your own images or use Unicode/emoji symbols
+
+% Note admonitions
+\newcommand{\notestart}{%
+  \needspace{3\baselineskip}%
+  \vspace{6pt}%
+  \nopagebreak[4]%
+  \begin{table}[!ht]
+  \centering
+  \rowcolors{1}{}{}
+  \arrayrulecolor{notecolor}
+  \begin{tabular}{|>{\centering\arraybackslash}m{1cm}|>{\columncolor{notecolor!20}\setlength{\parindent}{0pt}\setlength{\leftskip}{6pt}\setlength{\rightskip}{8pt}\fontsize{8pt}{10pt}\selectfont}p{0.63\textwidth}|}
+  \hline
+  \cellcolor{notecolor!30}\raisebox{-0.55\height}{\includegraphics[height=0.7cm]{images/icon-note.png}} &
+}
+\newcommand{\noteend}{%
+  \\ \hline
+  \end{tabular}
+
+  \end{table}
+  \arrayrulecolor{tableborder}
+  \vspace{3pt}
+}
+
+% Important admonitions
+\newcommand{\importantstart}{%
+  \needspace{3\baselineskip}%
+  \vspace{6pt}%
+  \nopagebreak[4]%
+  \begin{table}[!ht]
+  \centering
+  \rowcolors{1}{}{}
+  \arrayrulecolor{importantcolor}
+  \begin{tabular}{|>{\centering\arraybackslash}m{1cm}|>{\columncolor{importantcolor!15}\setlength{\parindent}{0pt}\setlength{\leftskip}{6pt}\setlength{\rightskip}{8pt}\fontsize{8pt}{10pt}\selectfont}p{0.63\textwidth}|}
+  \hline
+  \cellcolor{importantcolor!17}\raisebox{-0.55\height}{\includegraphics[height=0.5cm]{images/icon-important.png}} &
+}
+
+\newcommand{\importantend}{%
+  \\ \hline
+  \end{tabular}
+  \end{table}
+  \arrayrulecolor{tableborder}
+  \vspace{6pt}
+}
+
+% Warning admonitions
+\newcommand{\warningstart}{%
+  \needspace{3\baselineskip}%
+  \vspace{6pt}%
+  \nopagebreak[4]%
+  \begin{table}[!ht]
+  \centering
+  \rowcolors{1}{}{}
+  \arrayrulecolor{warningcolor}
+  \begin{tabular}{|>{\centering\arraybackslash}m{1cm}|>{\columncolor{warningcolor!17}\setlength{\parindent}{0pt}\setlength{\leftskip}{6pt}\setlength{\rightskip}{8pt}\fontsize{8pt}{10pt}\selectfont}p{0.63\textwidth}|}
+  \hline
+  \cellcolor{warningcolor!17}\raisebox{-0.55\height}{\includegraphics[height=0.5cm]{images/icon-warning.png}} &
+}
+\newcommand{\warningend}{%
+  \\ \hline
+  \end{tabular}
+  \end{table}
+  \arrayrulecolor{tableborder}
+  \vspace{6pt}
+}
+
+% Tip admonitions
+\newcommand{\tipstart}{%
+  \needspace{3\baselineskip}%
+  \vspace{6pt}%
+  \nopagebreak[4]%
+  \begin{table}[!ht]
+  \centering
+  \rowcolors{1}{}{}
+  \arrayrulecolor{tipcolor}
+  \begin{tabular}{|>{\centering\arraybackslash}m{1cm}|>{\columncolor{tipcolor!7}\setlength{\parindent}{0pt}\setlength{\leftskip}{6pt}\setlength{\rightskip}{8pt}\fontsize{8pt}{10pt}\selectfont}p{0.63\textwidth}|}
+  \hline
+  \cellcolor{tipcolor!17}\raisebox{-0.55\height}{\includegraphics[height=0.5cm]{images/icon-tip.png}} &
+}
+\newcommand{\tipend}{%
+  \\ \hline
+  \end{tabular}
+  \end{table}
+  \arrayrulecolor{tableborder}
+  \vspace{6pt}
+}
+
+% Critical admonitions
+\newcommand{\criticalstart}{%
+  \needspace{3\baselineskip}%
+  \vspace{6pt}%
+  \nopagebreak[4]%
+  \begin{table}[!ht]
+  \centering
+  \rowcolors{1}{}{}
+  \arrayrulecolor{criticalcolor}
+  \begin{tabular}{|>{\centering\arraybackslash}m{1cm}|>{\columncolor{criticalcolor!15}\setlength{\parindent}{0pt}\setlength{\leftskip}{6pt}\setlength{\rightskip}{8pt}\fontsize{8pt}{10pt}\selectfont}p{0.63\textwidth}|}
+  \hline
+  \cellcolor{criticalcolor!17}\raisebox{-0.55\height}{\includegraphics[height=0.5cm]{images/icon-warning.png}} &
+}
+\newcommand{\criticalend}{%
+  \\ \hline
+  \end{tabular}
+  \end{table}
+  \arrayrulecolor{tableborder}
+  \vspace{4pt}
+}
+
+
+% Define light grey color for table borders (for regular tables only, not admonitions)
+\definecolor{tableborder}{RGB}{81, 67, 132}
+\definecolor{tableprimary}{RGB}{233, 228, 241}
+\definecolor{tablesecondary}{RGB}{244, 241, 248}
+
+% Plain table environment with custom styling (for markdown tables)
+\newenvironment{plaintable}[1]{%
+  \begin{table}[h]
+  \centering
+  \setlength{\arrayrulewidth}{1pt}
+  \rowcolors{1}{tableprimary}{tablesecondary}
+  \begin{tabular}{#1}
+
+}{%
+  \end{tabular}
+  \end{table}
+}
+
+% Apply font styling to tabular environment
+\AtBeginEnvironment{tabular}{%
+  \fontsize{10pt}{12pt}\selectfont
+}
+
+% Code block styling
+\usepackage{listings}
+\usepackage{framed}
+\usepackage{fvextra}
+
+\definecolor{codebg}{RGB}{81, 67, 132}
+\definecolor{backcolour}{rgb}{0.96,0.95,0.97}
+\definecolor{jsonkey}{RGB}{88, 110, 117}
+\definecolor{jsonstring}{RGB}{42, 161, 152}
+\definecolor{jsonnumber}{RGB}{211, 54, 130}
+
+% Define Shaded environment for code blocks with background color
+\definecolor{shadecolor}{RGB}{239, 242, 248}
+
+% Constrain code blocks to 85% of text width for better readability
+\makeatletter
+\@ifundefined{Shaded}{%
+  \newenvironment{Shaded}{%
+    \begin{center}%
+    \begin{minipage}{0.85\textwidth}%
+    \begin{snugshade}%
+  }{%
+    \end{snugshade}%
+    \end{minipage}%
+    \end{center}%
+  }%
+}{%
+  \renewenvironment{Shaded}{%
+    \begin{center}%
+    \begin{minipage}{0.85\textwidth}%
+    \begin{snugshade}%
+  }{%
+    \end{snugshade}%
+    \end{minipage}%
+    \end{center}%
+  }%
+}
+\makeatother
+
+% Configure fancyvrb/fvextra for better code block line breaking
+\fvset{breaklines=true, breakanywhere=true}
+
+% Define JSON language for syntax highlighting
+\lstdefinelanguage{json}{
+    string=[s]{"}{"},
+    stringstyle=\color{jsonstring},
+    comment=[l]{:},
+    commentstyle=\color{jsonkey},
+    morestring=[b]',
+    literate=
+     *{0}{{{\color{jsonnumber}0}}}{1}
+      {1}{{{\color{jsonnumber}1}}}{1}
+      {2}{{{\color{jsonnumber}2}}}{1}
+      {3}{{{\color{jsonnumber}3}}}{1}
+      {4}{{{\color{jsonnumber}4}}}{1}
+      {5}{{{\color{jsonnumber}5}}}{1}
+      {6}{{{\color{jsonnumber}6}}}{1}
+      {7}{{{\color{jsonnumber}7}}}{1}
+      {8}{{{\color{jsonnumber}8}}}{1}
+      {9}{{{\color{jsonnumber}9}}}{1}
+}
+
+\lstdefinestyle{codebg}{
+    backgroundcolor=\color{snippets},
+    basicstyle=\ttfamily\normalsize,
+    breakatwhitespace=true,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    language=json
+}
+
+\lstset{style=codebg}
+
+% Regular table header styling
+\newcommand{\tableheader}[1]{\fontsize{9pt}{10pt}\selectfont}
+
+% Apply plain table styling to longtable (for Pandoc markdown tables)
+\AtBeginEnvironment{longtable}{%
+  \setlength{\arrayrulewidth}{1pt}
+  \rowcolors{1}{tableprimary}{tablesecondary}
+  \fontsize{9pt}{10pt}\selectfont
+  \setlength{\LTleft}{0pt}
+  \setlength{\LTright}{0pt}
+}
+
+% Redefine booktabs rules to be simple hlines
+\renewcommand{\toprule}{\hline}
+\renewcommand{\midrule}{\hline}
+\renewcommand{\bottomrule}{\hline}
+
+% Set borders for all regular tables
+\setlength{\arrayrulewidth}{0.7pt}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.3}
+\arrayrulecolor{tableborder}
